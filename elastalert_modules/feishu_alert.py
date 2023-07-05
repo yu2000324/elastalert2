@@ -61,7 +61,7 @@ class FeishuAlert(Alerter):
         }
 
         try:
-            url = self.url + self.bot_id
+            url = self.url
             res = requests.post(data=json.dumps(
                 body), url=url, headers=headers)
             res.raise_for_status()            
