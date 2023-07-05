@@ -26,6 +26,7 @@ RUN apt update && apt -y upgrade && \
     apt -y remove gcc libffi-dev && \
     apt -y autoremove && \
     mkdir -p /opt/elastalert && \
+    mkdir -p /usr/local/lib/python3.10/site-packages/elastalert/elastalert_modules && \
     echo "#!/bin/sh" >> /opt/elastalert/run.sh && \
     echo "set -e" >> /opt/elastalert/run.sh && \
     echo "elastalert-create-index --config /opt/elastalert/config.yaml" \
@@ -36,9 +37,10 @@ RUN apt update && apt -y upgrade && \
     groupadd -g ${GID} ${USERNAME} && \
     useradd -u ${UID} -g ${GID} -M -b /opt -s /sbin/nologin \
         -c "ElastAlert 2 User" ${USERNAME}
-
+COPY ./elastalert_modules/feishu_alert.py /usr/local/lib/python3.10/site-packages/elastalert/elastalert_modules/
+COPY ./elastalert_modules/__init__.py /usr/local/lib/python3.10/site-packages/elastalert/elastalert_modules/
 USER ${USERNAME}
-ENV TZ "UTC"
+ENV TZ ""Asia/Shanghai""
 
 WORKDIR /opt/elastalert
 ENTRYPOINT ["/opt/elastalert/run.sh"]
