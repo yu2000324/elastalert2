@@ -44,3 +44,4 @@ ENV TZ ""Asia/Shanghai""
 
 WORKDIR /opt/elastalert
 ENTRYPOINT ["/opt/elastalert/run.sh"]
+
