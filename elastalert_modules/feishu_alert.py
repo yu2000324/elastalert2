@@ -26,7 +26,7 @@ class FeishuAlert(Alerter):
     def __init__(self, rule):
         super(FeishuAlert, self).__init__(rule)
         self.url = self.rule.get(
-            "feishualert_url", "https://open.feishu.cn/open-apis/bot/v2/hook/")
+            "feishualert_url", "")
         self.bot_id = self.rule.get("feishualert_botid", "")
         self.skip = self.rule.get("feishualert_skip", {})
         if self.bot_id == "" :
@@ -52,7 +52,19 @@ class FeishuAlert(Alerter):
             "Content-Type": "application/json;",
         }
 
-        postBody = self.create_alert_body(matches)
+
+        #设置时间
+        if len(matches) > 0:
+            try:
+                self.rule["feishualert_time"] = time.strftime(
+                    "%Y-%m-%d %H:%M:%S", time.localtime())
+                merge = dict(**matches[0], **self.rule)
+                body["content"]["text"] = self.body.format(**merge)
+            except Exception as e:
+                pass
+
+        #获取发送消息体
+        postBody = self.rule.get("feishualert_body","")
         body = {
             "msg_type": "text",
             "content": {
