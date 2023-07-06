@@ -1,15 +1,3 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""
-@author: sheng-jie
-@contact: hi121073215@gmail.com
-@date: 2023-01-19
-@version: 0.0.1
-@license:
-@copyright:
-"""
-import json
 import requests
 import time
 
@@ -26,7 +14,7 @@ class FeishuAlert(Alerter):
     def __init__(self, rule):
         super(FeishuAlert, self).__init__(rule)
         self.url = self.rule.get(
-            "feishualert_url", "")
+            "feishualert_url", "https://open.feishu.cn/open-apis/bot/v2/hook/")
         self.bot_id = self.rule.get("feishualert_botid", "")
         self.skip = self.rule.get("feishualert_skip", {})
         if self.bot_id == "" :
@@ -52,19 +40,7 @@ class FeishuAlert(Alerter):
             "Content-Type": "application/json;",
         }
 
-
-        #设置时间
-        if len(matches) > 0:
-            try:
-                self.rule["feishualert_time"] = time.strftime(
-                    "%Y-%m-%d %H:%M:%S", time.localtime())
-                merge = dict(**matches[0], **self.rule)
-                body["content"]["text"] = self.body.format(**merge)
-            except Exception as e:
-                pass
-
-        #获取发送消息体
-        postBody = self.rule.get("feishualert_body","")
+        postBody = self.create_alert_body(matches)
         body = {
             "msg_type": "text",
             "content": {
@@ -76,7 +52,7 @@ class FeishuAlert(Alerter):
             url = self.url
             res = requests.post(data=json.dumps(
                 body), url=url, headers=headers)
-            res.raise_for_status()            
+            res.raise_for_status()
             elastalert_logger.info("send message to %s" % (postBody))
 
         except RequestException as e:
