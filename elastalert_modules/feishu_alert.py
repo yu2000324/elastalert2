@@ -1,3 +1,15 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+@author: sheng-jie
+@contact: hi121073215@gmail.com
+@date: 2023-01-19
+@version: 0.0.1
+@license:
+@copyright:
+"""
+import json
 import requests
 import time
 
@@ -52,7 +64,7 @@ class FeishuAlert(Alerter):
             url = self.url
             res = requests.post(data=json.dumps(
                 body), url=url, headers=headers)
-            res.raise_for_status()
+            res.raise_for_status()            
             elastalert_logger.info("send message to %s" % (postBody))
 
         except RequestException as e:
